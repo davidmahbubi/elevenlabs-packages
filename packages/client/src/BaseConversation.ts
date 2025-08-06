@@ -11,6 +11,7 @@ import type {
   IncomingSocketEvent,
   InternalTentativeAgentResponseEvent,
   InterruptionEvent,
+  PingEvent,
   UserTranscriptionEvent,
   VadScoreEvent,
 } from "./utils/events";
@@ -56,6 +57,7 @@ export type Callbacks = {
   onModeChange: (prop: { mode: Mode }) => void;
   onStatusChange: (prop: { status: Status }) => void;
   onCanSendFeedbackChange: (prop: { canSendFeedback: boolean }) => void;
+  onPing: (props: { ping: number | undefined }) => void;
   onUnhandledClientToolCall?: (
     params: ClientToolCallEvent["client_tool_call"]
   ) => void;
@@ -84,6 +86,7 @@ export class BaseConversation {
       onAudio: () => {},
       onModeChange: () => {},
       onStatusChange: () => {},
+      onPing: () => {},
       onCanSendFeedbackChange: () => {},
       ...partialOptions,
     };
@@ -156,6 +159,10 @@ export class BaseConversation {
       source: "user",
       message: event.user_transcription_event.user_transcript,
     });
+  }
+
+  protected handlePing(event: PingEvent) {
+    this.options.onPing({ ping: event.ping_event.ping_ms });
   }
 
   protected handleTentativeAgentResponse(
@@ -270,6 +277,7 @@ export class BaseConversation {
       }
 
       case "ping": {
+        this.handlePing(parsedEvent);
         this.connection.sendMessage({
           type: "pong",
           event_id: parsedEvent.ping_event.event_id,
