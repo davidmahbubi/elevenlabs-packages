@@ -74,6 +74,7 @@ export type HookCallbacks = Pick<
   | "onDebug"
   | "onUnhandledClientToolCall"
   | "onVadScore"
+  | "onPing"
 >;
 
 export function useConversation<T extends HookOptions & ControlledState>(
@@ -148,6 +149,7 @@ export function useConversation<T extends HookOptions & ControlledState>(
           onMessage: options?.onMessage || defaultOptions?.onMessage,
           onAudio: options?.onAudio || defaultOptions?.onAudio,
           onDebug: options?.onDebug || defaultOptions?.onDebug,
+          onPing: options?.onPing || defaultOptions?.onPing,
           onUnhandledClientToolCall:
             options?.onUnhandledClientToolCall ||
             defaultOptions?.onUnhandledClientToolCall,
